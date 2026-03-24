@@ -5,7 +5,10 @@ import { build } from "./utils/build.ts";
 import { join } from "./utils/join.ts";
 import { match } from "./utils/match.ts";
 
-function createRelativeURLSchema<S extends URLSchemaMap | null>(base: string, schema: S) {
+function createRelativeURLSchema<S extends URLSchemaMap | null>(
+  base: string,
+  schema: S,
+) {
   if (
     schema !== null &&
     Object.values(schema).some((entry) => !("~standard" in entry))
@@ -74,7 +77,11 @@ function createRelativeURLSchema<S extends URLSchemaMap | null>(base: string, sc
          * schema this URL pattern originates from.
          */
         exec: (url: string) => {
-          return match(join(base, url), compiledURL, urlSchema) as MatchShape | null;
+          return match(
+            join(base, url),
+            compiledURL,
+            urlSchema,
+          ) as MatchShape | null;
         },
         /**
          * Returns a URL string by filling out the URL pattern parameters
@@ -101,7 +108,9 @@ function createRelativeURLSchema<S extends URLSchemaMap | null>(base: string, sc
   };
 }
 
-type CreateURLSchemaResult<S extends URLSchemaMap | null> = ReturnType<typeof createRelativeURLSchema<S>>;
+type CreateURLSchemaResult<S extends URLSchemaMap | null> = ReturnType<
+  typeof createRelativeURLSchema<S>
+>;
 
 /**
  * Returns the functions to build and validate URLs in a type-safe manner
@@ -111,16 +120,22 @@ type CreateURLSchemaResult<S extends URLSchemaMap | null> = ReturnType<typeof cr
  * onto the given URL. `base` acts as a prefix, or a replacement to the
  * leading `"/"`, to URLs in the schema.
  */
-export function createURLSchema<S extends URLSchemaMap | null>(schema: S): CreateURLSchemaResult<S>;
+export function createURLSchema<S extends URLSchemaMap | null>(
+  schema: S,
+): CreateURLSchemaResult<S>;
 
-export function createURLSchema<S extends URLSchemaMap | null>(base: string, schema: S): CreateURLSchemaResult<S>;
+export function createURLSchema<S extends URLSchemaMap | null>(
+  base: string,
+  schema: S,
+): CreateURLSchemaResult<S>;
 
-export function createURLSchema<S extends URLSchemaMap | null>(base: S | string, schema?: S) {
-  if (typeof base !== "string")
-    return createRelativeURLSchema("", base);
+export function createURLSchema<S extends URLSchemaMap | null>(
+  base: S | string,
+  schema?: S,
+) {
+  if (typeof base !== "string") return createRelativeURLSchema("", base);
 
-  if (typeof schema === "undefined")
-    throw new TypeError("Missing URL schema");
+  if (typeof schema === "undefined") throw new TypeError("Missing URL schema");
 
   return createRelativeURLSchema(base, schema);
 }

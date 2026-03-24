@@ -200,7 +200,8 @@ let { url: url4, validate: validate4 } = createURLSchema("/nested", {
 
 assert(url4("/").toString() === "/nested");
 assert(
-  url4("/sections/:id", { params: { id: 1 } }).toString() === "/nested/sections/1",
+  url4("/sections/:id", { params: { id: 1 } }).toString() ===
+    "/nested/sections/1",
 );
 assert(url4("/sections/:id").toString() === "/nested/sections/:id");
 
@@ -214,7 +215,8 @@ assert(url4("/").exec("/x") === null);
 
 assert(url4("/search").toString() === "/nested/search");
 assert(
-  url4("/search", { query: { term: "x" } }).toString() === "/nested/search?term=x",
+  url4("/search", { query: { term: "x" } }).toString() ===
+    "/nested/search?term=x",
 );
 assert(
   url4("/search", { query: { term: "x", view: "full" } }).toString() ===
@@ -243,9 +245,13 @@ assert(
 );
 assert(url4("/search").exec("/search?view=compact") === null);
 
-assert(url4("/sections/:id").compile({ params: { id: 10 } }) === "/nested/sections/10");
 assert(
-  url4("/search").compile({ query: { term: "shape" } }) === "/nested/search?term=shape",
+  url4("/sections/:id").compile({ params: { id: 10 } }) ===
+    "/nested/sections/10",
+);
+assert(
+  url4("/search").compile({ query: { term: "shape" } }) ===
+    "/nested/search?term=shape",
 );
 assert(
   url4("/search").compile({ query: { term: "shape", view: "compact" } }) ===
