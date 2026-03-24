@@ -194,12 +194,13 @@ assert(
 assert(url4("/sections/:id").toString() === "/nested/sections/:id");
 
 assert(
-  JSON.stringify(url4("/sections/:id").exec("/sections/42")?.params) ===
+  JSON.stringify(url4("/sections/:id").exec("/nested/sections/42")?.params) ===
     '{"id":42}',
 );
 assert(url4("/sections/:id").exec("/sections/42")?.query === undefined);
-assert(url4("/sections/:id").exec("/x/42") === null);
-assert(url4("/").exec("/x") === null);
+assert(url4("/sections/:id").exec("/nested/sections/42")?.query === undefined);
+assert(url4("/sections/:id").exec("/nested/x/42") === null);
+assert(url4("/").exec("/nested/x") === null);
 
 assert(url4("/search").toString() === "/nested/search");
 assert(
@@ -215,23 +216,23 @@ assert(
     "/nested/search?term=x&view=full",
 );
 
-assert(url4("/search").exec("/x") === null);
+assert(url4("/search").exec("/nested/x") === null);
 assert(
-  JSON.stringify(url4("/search").exec("/search?term=test")?.query) ===
+  JSON.stringify(url4("/search").exec("/nested/search?term=test")?.query) ===
     '{"term":"test"}',
 );
-assert(url4("/search").exec("/search?term=test")?.params === undefined);
+assert(url4("/search").exec("/nested/search?term=test")?.params === undefined);
 assert(
-  JSON.stringify(url4("/search").exec("/search?term=test&view=full")?.query) ===
+  JSON.stringify(url4("/search").exec("/nested/search?term=test&view=full")?.query) ===
     '{"term":"test","view":"full"}',
 );
-assert(url4("/search").exec("/search?term=test&view=fulll") === null);
+assert(url4("/search").exec("/nested/search?term=test&view=fulll") === null);
 assert(
   JSON.stringify(
-    url4("/search").exec("/search?term=null&view=compact")?.query,
+    url4("/search").exec("/nested/search?term=null&view=compact")?.query,
   ) === '{"term":"null","view":"compact"}',
 );
-assert(url4("/search").exec("/search?view=compact") === null);
+assert(url4("/search").exec("/nested/search?view=compact") === null);
 
 assert(
   url4("/sections/:id").compile({ params: { id: 10 } }) ===
@@ -247,11 +248,11 @@ assert(
 );
 
 assert(
-  JSON.stringify(url4("/sections/:id").exec("/sections/10")?.params) ===
+  JSON.stringify(url4("/sections/:id").exec("/nested/sections/10")?.params) ===
     '{"id":10}',
 );
 
-assert(url4("/sections/:id").exec("/x") === null);
+assert(url4("/sections/:id").exec("/nested/x") === null);
 
 assert(validate4("/sections/10") === true);
 assert(validate4("/x") === false);

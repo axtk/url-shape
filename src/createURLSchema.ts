@@ -77,11 +77,7 @@ function createRelativeURLSchema<S extends URLSchemaMap | null>(
          * schema this URL pattern originates from.
          */
         exec: (url: string) => {
-          return match(
-            join(base, url),
-            compiledURL,
-            urlSchema,
-          ) as MatchShape | null;
+          return match(url, compiledURL, urlSchema) as MatchShape | null;
         },
         /**
          * Returns a URL string by filling out the URL pattern parameters
