@@ -223,8 +223,9 @@ assert(
 );
 assert(url4("/search").exec("/nested/search?term=test")?.params === undefined);
 assert(
-  JSON.stringify(url4("/search").exec("/nested/search?term=test&view=full")?.query) ===
-    '{"term":"test","view":"full"}',
+  JSON.stringify(
+    url4("/search").exec("/nested/search?term=test&view=full")?.query,
+  ) === '{"term":"test","view":"full"}',
 );
 assert(url4("/search").exec("/nested/search?term=test&view=fulll") === null);
 assert(
