@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createURLSchema } from "./index.ts";
+import { createURLSchema, join } from "./index.ts";
 
 let k = 0;
 
@@ -15,7 +15,19 @@ function assert(predicate: boolean) {
   }
 }
 
-console.log("fixed, params, query");
+console.log("join");
+assert(join("", "/") === "/");
+assert(join("", "/sections/:id") === "/sections/:id");
+assert(join("/", "sections", ":id") === "/sections/:id");
+assert(join("sections", ":id") === "sections/:id");
+assert(join("", "sections", ":id") === "sections/:id");
+assert(join("", "sections", "", ":id") === "sections/:id");
+assert(join("", "sections", "") === "sections");
+assert(join("sections", "") === "sections");
+assert(join("/", "sections", "") === "/sections");
+assert(join("/nested", "/") === "/nested");
+
+console.log("\nfixed, params, query");
 
 let { url, validate } = createURLSchema({
   "/": z.object({}),
@@ -168,5 +180,86 @@ assert(
 );
 assert(url3("/x{/:name}").exec("/x/shape")?.query === undefined);
 assert(url3("/x{/:name}").exec("/search") === null);
+
+console.log("\nrelative schema");
+
+let { url: url4, validate: validate4 } = createURLSchema("/nested", {
+  "/": z.object({}),
+  "/sections/:id": z.object({
+    params: z.object({
+      id: z.coerce.number(),
+    }),
+  }),
+  "/search": z.object({
+    query: z.object({
+      term: z.string(),
+      view: z.optional(z.enum(["full", "compact"])),
+    }),
+  }),
+});
+
+assert(url4("/").toString() === "/nested");
+assert(
+  url4("/sections/:id", { params: { id: 1 } }).toString() === "/nested/sections/1",
+);
+assert(url4("/sections/:id").toString() === "/nested/sections/:id");
+
+assert(
+  JSON.stringify(url4("/sections/:id").exec("/sections/42")?.params) ===
+    '{"id":42}',
+);
+assert(url4("/sections/:id").exec("/sections/42")?.query === undefined);
+assert(url4("/sections/:id").exec("/x/42") === null);
+assert(url4("/").exec("/x") === null);
+
+assert(url4("/search").toString() === "/nested/search");
+assert(
+  url4("/search", { query: { term: "x" } }).toString() === "/nested/search?term=x",
+);
+assert(
+  url4("/search", { query: { term: "x", view: "full" } }).toString() ===
+    "/nested/search?term=x&view=full",
+);
+assert(
+  url4("/search", { query: { term: "x", view: "full" } }).href ===
+    "/nested/search?term=x&view=full",
+);
+
+assert(url4("/search").exec("/x") === null);
+assert(
+  JSON.stringify(url4("/search").exec("/search?term=test")?.query) ===
+    '{"term":"test"}',
+);
+assert(url4("/search").exec("/search?term=test")?.params === undefined);
+assert(
+  JSON.stringify(url4("/search").exec("/search?term=test&view=full")?.query) ===
+    '{"term":"test","view":"full"}',
+);
+assert(url4("/search").exec("/search?term=test&view=fulll") === null);
+assert(
+  JSON.stringify(
+    url4("/search").exec("/search?term=null&view=compact")?.query,
+  ) === '{"term":"null","view":"compact"}',
+);
+assert(url4("/search").exec("/search?view=compact") === null);
+
+assert(url4("/sections/:id").compile({ params: { id: 10 } }) === "/nested/sections/10");
+assert(
+  url4("/search").compile({ query: { term: "shape" } }) === "/nested/search?term=shape",
+);
+assert(
+  url4("/search").compile({ query: { term: "shape", view: "compact" } }) ===
+    "/nested/search?term=shape&view=compact",
+);
+
+assert(
+  JSON.stringify(url4("/sections/:id").exec("/sections/10")?.params) ===
+    '{"id":10}',
+);
+
+assert(url4("/sections/:id").exec("/x") === null);
+
+assert(validate4("/sections/10") === true);
+assert(validate4("/x") === false);
 
 console.log("\npassed");

@@ -2,13 +2,10 @@ import type { BaselineURLComponents } from "./types/BaselineURLComponents.ts";
 import type { UnpackedURLSchema } from "./types/UnpackedURLSchema.ts";
 import type { URLSchemaMap } from "./types/URLSchemaMap.ts";
 import { build } from "./utils/build.ts";
+import { join } from "./utils/join.ts";
 import { match } from "./utils/match.ts";
 
-/**
- * Returns the functions to build and validate URLs in a type-safe manner
- * based on the given schema.
- */
-export function createURLSchema<S extends URLSchemaMap | null>(schema: S) {
+function createRelativeURLSchema<S extends URLSchemaMap | null>(base: string, schema: S) {
   if (
     schema !== null &&
     Object.values(schema).some((entry) => !("~standard" in entry))
@@ -63,7 +60,7 @@ export function createURLSchema<S extends URLSchemaMap | null>(schema: S) {
         hash: string;
       };
 
-      let compiledURL = build(String(pattern), data);
+      let compiledURL = build(join(base, String(pattern)), data);
       let urlSchema = (schema as S)?.[pattern] as S extends null
         ? undefined
         : NonNullable<S>[P];
@@ -77,14 +74,14 @@ export function createURLSchema<S extends URLSchemaMap | null>(schema: S) {
          * schema this URL pattern originates from.
          */
         exec: (url: string) => {
-          return match(url, compiledURL, urlSchema) as MatchShape | null;
+          return match(join(base, url), compiledURL, urlSchema) as MatchShape | null;
         },
         /**
          * Returns a URL string by filling out the URL pattern parameters
          * from `input`.
          */
         compile: (input: URLShape | null | undefined) =>
-          build(String(pattern), input),
+          build(join(base, String(pattern)), input),
         toString: () => compiledURL,
       };
     },
@@ -102,4 +99,28 @@ export function createURLSchema<S extends URLSchemaMap | null>(schema: S) {
       return false;
     },
   };
+}
+
+type CreateURLSchemaResult<S extends URLSchemaMap | null> = ReturnType<typeof createRelativeURLSchema<S>>;
+
+/**
+ * Returns the functions to build and validate URLs in a type-safe manner
+ * based on the given schema.
+ *
+ * Pass an optional `base` URL as the first parameter to rebase the schema
+ * onto the given URL. `base` acts as a prefix, or a replacement to the
+ * leading `"/"`, to URLs in the schema.
+ */
+export function createURLSchema<S extends URLSchemaMap | null>(schema: S): CreateURLSchemaResult<S>;
+
+export function createURLSchema<S extends URLSchemaMap | null>(base: string, schema: S): CreateURLSchemaResult<S>;
+
+export function createURLSchema<S extends URLSchemaMap | null>(base: S | string, schema?: S) {
+  if (typeof base !== "string")
+    return createRelativeURLSchema("", base);
+
+  if (typeof schema === "undefined")
+    throw new TypeError("Missing URL schema");
+
+  return createRelativeURLSchema(base, schema);
 }
