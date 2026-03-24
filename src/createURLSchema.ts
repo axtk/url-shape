@@ -1,8 +1,8 @@
+import { join } from "url-shape-join";
 import type { BaselineURLComponents } from "./types/BaselineURLComponents.ts";
 import type { UnpackedURLSchema } from "./types/UnpackedURLSchema.ts";
 import type { URLSchemaMap } from "./types/URLSchemaMap.ts";
 import { build } from "./utils/build.ts";
-import { join } from "./utils/join.ts";
 import { match } from "./utils/match.ts";
 
 function createRelativeURLSchema<S extends URLSchemaMap | null>(
