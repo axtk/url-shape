@@ -1,6 +1,6 @@
 {
   "name": "url-shape",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Type-safe schema-based URL builder",
   "type": "module",
   "main": "./dist/index.cjs",
