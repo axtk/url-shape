@@ -55,7 +55,7 @@ export const url = createURLBuilder({
 ```
 
 ```ts
-url("/sections/:id", { params: { id: 10 } })
+url("/sections/:id", { params: { id: 10 } }).href // "/sections/10"
                     // ^ { id: number }
 ```
 
