@@ -272,11 +272,13 @@ let url6 = createURLBuilder("/base");
 
 assert(url6("/").toString() === "/base");
 assert(
-  url6("/sections/:id", { params: { id: "x" } }).toString() === "/base/sections/x",
+  url6("/sections/:id", { params: { id: "x" } }).toString() ===
+    "/base/sections/x",
 );
 
 assert(
-  JSON.stringify(url6("/sections/:id").exec("/sections/10")?.params) === undefined,
+  JSON.stringify(url6("/sections/:id").exec("/sections/10")?.params) ===
+    undefined,
 );
 assert(
   JSON.stringify(url6("/sections/:id").exec("/base/sections/10")?.params) ===

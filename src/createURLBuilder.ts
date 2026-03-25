@@ -2,15 +2,16 @@ import { join } from "url-shape-join";
 import type { BaselineURLComponents } from "./types/BaselineURLComponents.ts";
 import type { UnpackedURLSchemaShape } from "./types/UnpackedURLSchemaShape.ts";
 import type { URLSchemaShapeMap } from "./types/URLSchemaShapeMap.ts";
+import { URLSchema } from "./URLSchema.ts";
 import { build } from "./utils/build.ts";
 import { match } from "./utils/match.ts";
-import { URLSchema } from "./URLSchema.ts";
 
 function createRelativeURLBuilder<S extends URLSchemaShapeMap>(
   base: string,
   schema: URLSchema<S> | S | null | undefined,
 ) {
-  let normalizedSchema = schema instanceof URLSchema ? schema : new URLSchema(schema ?? null);
+  let normalizedSchema =
+    schema instanceof URLSchema ? schema : new URLSchema(schema ?? null);
 
   type SN = typeof normalizedSchema._shape;
 
@@ -34,11 +35,11 @@ function createRelativeURLBuilder<S extends URLSchemaShapeMap>(
    * schema.
    */
   return <P extends keyof NonNullable<SN>>(
-      pattern: SN extends null ? string : P,
-      data?: SN extends null
-        ? BaselineURLComponents
-        : UnpackedURLSchemaShape<NonNullable<SN>[P]>,
-    ) => {
+    pattern: SN extends null ? string : P,
+    data?: SN extends null
+      ? BaselineURLComponents
+      : UnpackedURLSchemaShape<NonNullable<SN>[P]>,
+  ) => {
     type URLShape = NonNullable<typeof data>;
 
     type MatchShape = {
