@@ -1,5 +1,5 @@
 import type { URLComponents } from "../types/URLComponents.ts";
-import type { URLSchema } from "../types/URLSchema.ts";
+import type { URLSchemaShape } from "../types/URLSchemaShape.ts";
 
 function isEmpty(x: unknown) {
   return (
@@ -21,7 +21,7 @@ function removeEmptyEntries(x: Record<string, unknown>) {
 
 export function parseObject(
   value: URLComponents,
-  schema: URLSchema | undefined,
+  schema: URLSchemaShape | undefined,
 ) {
   let adjustedValue = removeEmptyEntries(value) as URLComponents;
 

@@ -1,12 +1,12 @@
 import { match as matchParams } from "path-to-regexp";
 import { QuasiURL } from "quasiurl";
-import type { URLSchema } from "../types/URLSchema.ts";
+import type { URLSchemaShape } from "../types/URLSchemaShape.ts";
 import { parseObject } from "./parseObject.ts";
 
 export function match(
   url: string,
   pattern: string,
-  urlSchema?: URLSchema | null | undefined,
+  urlSchema?: URLSchemaShape | null | undefined,
 ) {
   let { origin, pathname, search, hash } = new QuasiURL(url);
   let { origin: patternOrigin, pathname: patternPathname } = new QuasiURL(

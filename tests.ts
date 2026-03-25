@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createURLSchema } from "./index.ts";
+import { createURLBuilder, URLSchema } from "./index.ts";
 
 let k = 0;
 
@@ -17,7 +17,7 @@ function assert(predicate: boolean) {
 
 console.log("fixed, params, query");
 
-let { url, validate } = createURLSchema({
+let schema = new URLSchema({
   "/": z.object({}),
   "/sections/:id": z.object({
     params: z.object({
@@ -31,6 +31,8 @@ let { url, validate } = createURLSchema({
     }),
   }),
 });
+
+let url = createURLBuilder(schema);
 
 assert(url("/").toString() === "/");
 assert(
@@ -93,12 +95,14 @@ assert(
 
 assert(url("/sections/:id").exec("/x") === null);
 
-assert(validate("/sections/10") === true);
-assert(validate("/x") === false);
+assert(schema.test("/sections/10") === true);
+assert(schema.test("/x") === false);
 
 console.log("\nnull schema");
 
-let { url: url2, validate: validate2 } = createURLSchema(null);
+let schema2 = new URLSchema(null);
+
+let url2 = createURLBuilder(schema2);
 
 assert(url2("/").toString() === "/");
 assert(
@@ -116,12 +120,12 @@ assert(
 assert(url2("/test").exec("/test")?.params === undefined);
 assert(url2("/test").exec("/text") === null);
 
-assert(validate2("/sections/10") === true);
-assert(validate2("/x") === true);
+assert(schema2.test("/sections/10") === true);
+assert(schema2.test("/x") === true);
 
 console.log("\noptionals");
 
-let { url: url3 } = createURLSchema({
+let url3 = createURLBuilder({
   "/sections/:id": z.object({
     params: z.object({
       id: z.coerce.number(),
@@ -171,20 +175,7 @@ assert(url3("/x{/:name}").exec("/search") === null);
 
 console.log("\nrelative schema");
 
-let { url: url4, validate: validate4 } = createURLSchema("/nested", {
-  "/": z.object({}),
-  "/sections/:id": z.object({
-    params: z.object({
-      id: z.coerce.number(),
-    }),
-  }),
-  "/search": z.object({
-    query: z.object({
-      term: z.string(),
-      view: z.optional(z.enum(["full", "compact"])),
-    }),
-  }),
-});
+let url4 = createURLBuilder("/nested", schema);
 
 assert(url4("/").toString() === "/nested");
 assert(
@@ -255,7 +246,47 @@ assert(
 
 assert(url4("/sections/:id").exec("/nested/x") === null);
 
-assert(validate4("/sections/10") === true);
-assert(validate4("/x") === false);
+console.log("\nno schema");
+
+let url5 = createURLBuilder();
+
+assert(url5("/").toString() === "/");
+assert(
+  url5("/sections/:id", { params: { id: "x" } }).toString() === "/sections/x",
+);
+
+assert(
+  JSON.stringify(url5("/sections/:id").exec("/sections/10")?.params) ===
+    '{"id":"10"}',
+);
+assert(
+  JSON.stringify(url5("/x/:name").exec("/x/intro")?.params) ===
+    '{"name":"intro"}',
+);
+assert(url5("/test").exec("/test")?.params === undefined);
+assert(url5("/test").exec("/text") === null);
+
+console.log("\nno schema, rebased");
+
+let url6 = createURLBuilder("/base");
+
+assert(url6("/").toString() === "/base");
+assert(
+  url6("/sections/:id", { params: { id: "x" } }).toString() === "/base/sections/x",
+);
+
+assert(
+  JSON.stringify(url6("/sections/:id").exec("/sections/10")?.params) === undefined,
+);
+assert(
+  JSON.stringify(url6("/sections/:id").exec("/base/sections/10")?.params) ===
+    '{"id":"10"}',
+);
+assert(
+  JSON.stringify(url6("/x/:name").exec("/base/x/intro")?.params) ===
+    '{"name":"intro"}',
+);
+assert(url6("/test").exec("/base/test")?.params === undefined);
+assert(url6("/test").exec("/base/text") === null);
 
 console.log("\npassed");
