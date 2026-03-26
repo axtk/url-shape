@@ -15,7 +15,10 @@ export function match(
 
   if (origin !== patternOrigin) return null;
 
-  if (urlSchema === null) return url === pattern ? { hash } : null;
+  let query = Object.fromEntries(new URLSearchParams(search));
+
+  if (url === pattern) return { query, hash };
+  if (urlSchema === null) return null;
 
   let matchPattern = matchParams(patternPathname);
   let paramsMatch = matchPattern(pathname);
@@ -23,8 +26,6 @@ export function match(
   if (paramsMatch === false) return null;
 
   let params = paramsMatch.params;
-  let query = Object.fromEntries(new URLSearchParams(search));
-
   let parseResult = parseObject({ params, query }, urlSchema);
 
   if (parseResult === null) return null;
