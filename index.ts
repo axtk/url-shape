@@ -4,4 +4,5 @@ export * from "./src/types/UnpackedURLSchemaShape.ts";
 export * from "./src/types/URLComponents.ts";
 export * from "./src/types/URLSchemaShape.ts";
 export * from "./src/types/URLSchemaShapeMap.ts";
+export * from "./src/utils/join.ts";
 export * from "./src/URLSchema.ts";

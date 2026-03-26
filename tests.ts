@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createURLBuilder, URLSchema } from "./index.ts";
+import { createURLBuilder, join, URLSchema } from "./index.ts";
 
 let k = 0;
 
@@ -15,7 +15,19 @@ function assert(predicate: boolean) {
   }
 }
 
-console.log("fixed, params, query");
+console.log("join");
+assert(join("", "/") === "/");
+assert(join("", "/sections/:id") === "/sections/:id");
+assert(join("/", "sections", ":id") === "/sections/:id");
+assert(join("sections", ":id") === "sections/:id");
+assert(join("", "sections", ":id") === "sections/:id");
+assert(join("", "sections", "", ":id") === "sections/:id");
+assert(join("", "sections", "") === "sections");
+assert(join("sections", "") === "sections");
+assert(join("/", "sections", "") === "/sections");
+assert(join("/nested", "/") === "/nested");
+
+console.log("\nfixed, params, query");
 
 let schema = new URLSchema({
   "/": z.object({}),
