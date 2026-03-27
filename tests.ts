@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createURLBuilder, join, url, URLSchema } from "./index.ts";
+import { createURLBuilder, join, URLSchema, url } from "./index.ts";
 
 let k = 0;
 
@@ -104,8 +104,13 @@ assert(
     '{"id":42}',
 );
 assert(url3("/sections/:id").exec("/sections/42")?.query === undefined);
-assert(isObject(url3("/sections/:id", { params: { id: 42 } }).exec("/sections/42")));
-assert(url3("/sections/:id", { params: { id: 42 } }).exec("/sections/42")?.query !== undefined);
+assert(
+  isObject(url3("/sections/:id", { params: { id: 42 } }).exec("/sections/42")),
+);
+assert(
+  url3("/sections/:id", { params: { id: 42 } }).exec("/sections/42")?.query !==
+    undefined,
+);
 assert(url3("/sections/:id").exec("/x/42") === null);
 assert(url3("/").exec("/x") === null);
 
@@ -140,9 +145,12 @@ assert(
 );
 assert(url3("/search").exec("/search?view=compact") === null);
 
-assert(url3("/sections/:id").compile({ params: { id: 10 } }) === "/sections/10");
 assert(
-  url3("/search").compile({ query: { term: "shape" } }) === "/search?term=shape",
+  url3("/sections/:id").compile({ params: { id: 10 } }) === "/sections/10",
+);
+assert(
+  url3("/search").compile({ query: { term: "shape" } }) ===
+    "/search?term=shape",
 );
 assert(
   url3("/search").compile({ query: { term: "shape", view: "compact" } }) ===
