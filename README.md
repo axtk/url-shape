@@ -4,12 +4,10 @@ URL builder with optional schema-based type safety
 
 ## Building URLs
 
-Use the URL builder returned from `createURLBuilder()` to produce URLs based on their components, such as path placeholders and query parameters.
+Use the URL builder `url()` to produce URLs based on their components, such as path placeholders and query parameters.
 
 ```js
-import { createURLBuilder } from "url-shape";
-
-const url = createURLBuilder();
+import { url } from "url-shape";
 
 url("/sections/:id", { params: { id: 10 } }).href // "/sections/10"
 url("/sections/:id", { params: { id: 10 } }).toString() // "/sections/10"
@@ -22,9 +20,11 @@ url("/sections/:id").compile({ params: { id: 10 } }) // "/sections/10"
 url("/search").compile({ query: { term: "shape" } }) // "/search?term=shape"
 ```
 
-⬥ Pass an optional `base` URL as the parameter of `createURLBuilder()` to produce URLs relative to the given URL. `base` acts as a prefix, or a replacement to the leading `/`, applied to the output URLs. It's a handy way to rebase all URLs produced by the URL builder to another root URL.
+⬥ Use `createURLBuilder()` to create a standalone or customized URL builder. Pass an optional `base` URL as the parameter of `createURLBuilder()` to produce URLs relative to the given URL. `base` acts as a prefix, or a replacement to the leading `/` in the paths, applied to the output URLs. It's a handy way to rebase all URLs produced by the URL builder to another root URL.
 
 ```js
+import { createURLBuilder } from "url-shape";
+
 const url = createURLBuilder("/nested");
 
 url("/sections/:id", { params: { id: 10 } }).href // "/nested/sections/10"
