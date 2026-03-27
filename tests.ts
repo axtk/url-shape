@@ -52,7 +52,10 @@ assert(url("/").toString(), "/");
 assert(url("/sections/:id", { params: { id: "x" } }).href, "/sections/x");
 assert(url("/sections/:id", { params: { id: "x" } }).toString(), "/sections/x");
 assert(url("/search", { query: { term: "shape" } }).href, "/search?term=shape");
-assert(url("/search", { query: { term: "shape" } }).toString(), "/search?term=shape");
+assert(
+  url("/search", { query: { term: "shape" } }).toString(),
+  "/search?term=shape",
+);
 
 assert(
   JSON.stringify(url("/sections/:id").exec("/sections/10")?.params),
@@ -86,8 +89,14 @@ console.log("\nno schema, rebased");
 let url2 = createURLBuilder("/nested");
 
 assert(url2("/").href, "/nested");
-assert(url2("/sections/:id", { params: { id: "x" } }).href, "/nested/sections/x");
-assert(url2("/search", { query: { term: "shape" } }).href, "/nested/search?term=shape");
+assert(
+  url2("/sections/:id", { params: { id: "x" } }).href,
+  "/nested/sections/x",
+);
+assert(
+  url2("/search", { query: { term: "shape" } }).href,
+  "/nested/search?term=shape",
+);
 
 assert(
   JSON.stringify(url2("/sections/:id").exec("/sections/10")?.params),
@@ -202,10 +211,7 @@ let url4 = createURLBuilder(schema2);
 
 assert(url4("/").href, "/");
 assert(url4("/").toString(), "/");
-assert(
-  url4("/sections/:id", { params: { id: "x" } }).href,
-  "/sections/x",
-);
+assert(url4("/sections/:id", { params: { id: "x" } }).href, "/sections/x");
 assert(
   url4("/sections/:id", { params: { id: "x" } }).toString(),
   "/sections/x",
@@ -264,10 +270,7 @@ assert(url5("/x{/:name}", {}).href, "/x");
 assert(url5("/x{/:name}", {}).toString(), "/x");
 assert(url5("/x{/:name}", { params: undefined }).href, "/x");
 assert(url5("/x{/:name}", { params: undefined }).toString(), "/x");
-assert(
-  url5("/x{/:name}", { params: { name: "shape" } }).href,
-  "/x/shape",
-);
+assert(url5("/x{/:name}", { params: { name: "shape" } }).href, "/x/shape");
 assert(
   url5("/x{/:name}", { params: { name: "shape" } }).toString(),
   "/x/shape",
@@ -288,10 +291,7 @@ let url6 = createURLBuilder("/nested", schema);
 
 assert(url6("/").href, "/nested");
 assert(url6("/").toString(), "/nested");
-assert(
-  url6("/sections/:id", { params: { id: 1 } }).href,
-  "/nested/sections/1",
-);
+assert(url6("/sections/:id", { params: { id: 1 } }).href, "/nested/sections/1");
 assert(url6("/sections/:id").href, "/nested/sections/:id");
 
 assert(
@@ -304,10 +304,7 @@ assert(url6("/sections/:id").exec("/nested/x/42"), null);
 assert(url6("/").exec("/nested/x"), null);
 
 assert(url6("/search").href, "/nested/search");
-assert(
-  url6("/search", { query: { term: "x" } }).href,
-  "/nested/search?term=x",
-);
+assert(url6("/search", { query: { term: "x" } }).href, "/nested/search?term=x");
 assert(
   url6("/search", { query: { term: "x", view: "full" } }).href,
   "/nested/search?term=x&view=full",
