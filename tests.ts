@@ -3,7 +3,7 @@ import { createURLBuilder, join, URLSchema, url } from "./index.ts";
 
 let k = 0;
 
-function toString(x: unknown) {
+function toComparable(x: unknown) {
   return typeof x === "string" ? x : JSON.stringify(x);
 }
 
@@ -12,7 +12,7 @@ function assert(...args: unknown[]) {
   let actual = args[0];
   let expected = args.length === 1 ? true : args[1];
 
-  if (toString(actual) === toString(expected))
+  if (toComparable(actual) === toComparable(expected))
     console.log(n, "passed");
   else {
     console.error(n, "failed");
