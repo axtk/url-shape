@@ -18,13 +18,12 @@
     "url": "git://github.com/axtk/url-shape.git"
   },
   "keywords": [
-    "url builder",
     "url",
-    "schema",
-    "typed schema",
-    "type-safe",
-    "zod",
-    "yup"
+    "url builder",
+    "url schema",
+    "type-safe urls",
+    "routes",
+    "type-safe routes"
   ],
   "dependencies": {
     "@standard-schema/spec": "^1.1.0",
