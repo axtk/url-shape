@@ -9,7 +9,7 @@ Use the URL builder returned from `createURLBuilder()` to produce URLs based on 
 ```js
 import { createURLBuilder } from "url-shape";
 
-let url = createURLBuilder();
+const url = createURLBuilder();
 
 url("/sections/:id", { params: { id: 10 } }).href // "/sections/10"
 url("/sections/:id", { params: { id: 10 } }).toString() // "/sections/10"
@@ -22,17 +22,17 @@ url("/sections/:id").compile({ params: { id: 10 } }) // "/sections/10"
 url("/search").compile({ query: { term: "shape" } }) // "/search?term=shape"
 ```
 
-⬥ Pass an optional `base` URL as the parameter of `createURLBuilder()` to produce URLs relative to the given URL. `base` acts as a prefix, or a replacement to the leading `/`, to URLs in the schema. It's a handy way to rebase all URLs to another root URL.
+⬥ Pass an optional `base` URL as the parameter of `createURLBuilder()` to produce URLs relative to the given URL. `base` acts as a prefix, or a replacement to the leading `/`, applied to the output URLs. It's a handy way to rebase all URLs produced by the URL builder to another root URL.
 
 ```js
-let url = createURLBuilder("/nested");
+const url = createURLBuilder("/nested");
 
 url("/sections/:id", { params: { id: 10 } }).href // "/nested/sections/10"
 ```
 
 ## Type safety
 
-Pass a URL schema to `createURLBuilder()` to make sure that the URL parameters match the URL and they contain data of the expected type. A URL schema can be defined with any validation lib supporting the [Standard Schema](https://github.com/standard-schema/standard-schema#readme) spec, including Zod, ArkType, Valibot, or Yup.
+Pass a URL schema to `createURLBuilder()` to make sure that the URL parameters match the URL and that they contain data of the expected type. A URL schema can be defined with any validation lib supporting the [Standard Schema](https://github.com/standard-schema/standard-schema#readme) spec, including Zod, ArkType, Valibot, or Yup.
 
 ```ts
 import { createURLBuilder } from "url-shape";
