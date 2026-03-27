@@ -63,6 +63,8 @@ url("/sections/:id", { params: { id: 10 } }).href // "/sections/10"
 
 ⬥ An entire web app doesn't have to be covered by a single URL schema. Each self-contained section of the app can have its own URL builder on top of its own URL schema.
 
+⬥ The `base` parameter can be used with a URL schema, too. Use `createURLBuilder(base, schema)` to produce URLs relative to the given `base` URL.
+
 ## Validating against a URL schema
 
 As an alternative to passing a URL schema directly to `createURLBuilder()` as described above, a URL schema can be created as a standalone object:
