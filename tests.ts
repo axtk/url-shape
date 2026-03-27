@@ -15,6 +15,10 @@ function assert(predicate: boolean) {
   }
 }
 
+function isObject(x: unknown) {
+  return x !== null && typeof x === "object";
+}
+
 console.log("join");
 assert(join("", "/") === "/");
 assert(join("", "/sections/:id") === "/sections/:id");
@@ -57,6 +61,8 @@ assert(
     '{"id":42}',
 );
 assert(url("/sections/:id").exec("/sections/42")?.query === undefined);
+assert(isObject(url("/sections/:id", { params: { id: 42 } }).exec("/sections/42")));
+assert(url("/sections/:id", { params: { id: 42 } }).exec("/sections/42")?.query !== undefined);
 assert(url("/sections/:id").exec("/x/42") === null);
 assert(url("/").exec("/x") === null);
 
