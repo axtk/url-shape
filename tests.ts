@@ -29,6 +29,7 @@ function isObject(x: unknown) {
 }
 
 console.log("join");
+
 assert(join("", "/"), "/");
 assert(join("", "/sections/:id"), "/sections/:id");
 assert(join("/", "sections", ":id"), "/sections/:id");
@@ -39,6 +40,11 @@ assert(join("", "sections", ""), "sections");
 assert(join("sections", ""), "sections");
 assert(join("/", "sections", ""), "/sections");
 assert(join("/nested", "/"), "/nested");
+
+assert(join("", "https://example.com"), "https://example.com");
+assert(join("", "https://example.com", ""), "https://example.com");
+assert(join("", "https://example.com", "x"), "https://example.com/x");
+assert(join("", "https://example.com", "", "x"), "https://example.com/x");
 
 console.log("\nno schema, default");
 
@@ -57,6 +63,10 @@ assert(
 );
 assert(url("/test").exec("/test")?.params, undefined);
 assert(url("/test").exec("/text"), null);
+
+assert(url("https://example.com/demo/:id", { params: { id: 10 } }).href, "https://example.com/demo/10");
+assert(url("https://example.com/demo/:id", { params: { id: 10 }, query: { x: "test", y: 1 } }).href, "https://example.com/demo/10?x=test&y=1");
+assert(url("https://example.com/demo", { query: { x: "test", y: 1 } }).href, "https://example.com/demo?x=test&y=1");
 
 console.log("\nno schema, rebased");
 

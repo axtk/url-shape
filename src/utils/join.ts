@@ -15,5 +15,8 @@ export function join(...args: string[]) {
   if (hasLeadingSlash) result = `/${result}`;
   if (hasTrailingSlash) result = `${result}/`;
 
-  return result.replace(/\/+/g, "/");
+  let head = result.match(/^(\w+:)?\/\//)?.[0] ?? "";
+  let tail = result.slice(head.length);
+
+  return `${head}${tail.replace(/\/+/g, "/")}`;
 }
