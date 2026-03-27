@@ -2,6 +2,8 @@
 
 URL builder with optional schema-based type safety
 
+Contents: [Building URLs](#building-urls) · [Type safety](#type-safety) · [Validating against a URL schema](#validating-against-a-url-schema)
+
 ## Building URLs
 
 Use the URL builder `url()` to produce URLs based on their components, such as path placeholders and query parameters.
@@ -41,11 +43,13 @@ import { z } from "zod";
 export const url = createURLBuilder({
   "/": z.object({}), // No parameters, empty schema
   "/sections/:id": z.object({
+    // Path placeholders
     params: z.object({
       id: z.coerce.number(),
     }),
   }),
   "/search": z.object({
+    // Query (or search) parameters
     query: z.object({
       term: z.string(),
       view: z.optional(z.enum(["full", "compact"])),
@@ -57,6 +61,9 @@ export const url = createURLBuilder({
 ```ts
 url("/sections/:id", { params: { id: 10 } }).href // "/sections/10"
                     // ^ { id: number }
+
+url("/search", { query: { term: "shape" } }).href // "/search?term=shape"
+              // ^ { term: string, view?: "full" | "compact" }
 ```
 
 ⬥ With Zod, mind the `.coerce` part in the schema for non-string parameters so that string URL components are converted to the preferred types.
@@ -88,5 +95,7 @@ Use a `URLSchema` object to check whether a URL matches any entries in the schem
 schema.test("/sections/10") // true, found in the schema
 schema.test("/x") // false, not found in the schema
 ```
+
+⬥ Testing against a comprehensive URL schema can be used to help handle unknown URLs.
 
 ⬥ A `URLSchema` object can also be passed to `createURLBuilder()`.
