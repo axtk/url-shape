@@ -99,3 +99,5 @@ schema.test("/x") // false, not found in the schema
 ⬥ Testing against a comprehensive URL schema can be used to help handle unknown URLs.
 
 ⬥ A `URLSchema` object can also be passed to `createURLBuilder()`.
+
+⬥ A URL schema created as `new URLSchema(null)` is technically valid, too. It doesn't set any constraints, testing any URL against it with `schema.test(url)` results in `true`.
