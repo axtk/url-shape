@@ -1,6 +1,6 @@
 import type { BaselineURLComponents } from "./types/BaselineURLComponents.ts";
 import type { UnpackedURLSchemaShape } from "./types/UnpackedURLSchemaShape.ts";
-import { URLComponents } from "./types/URLComponents.ts";
+import type { URLComponents } from "./types/URLComponents.ts";
 import type { URLSchemaShapeMap } from "./types/URLSchemaShapeMap.ts";
 import { URLSchema } from "./URLSchema.ts";
 import { build } from "./utils/build.ts";
@@ -11,7 +11,8 @@ function createRelativeURLBuilder<S extends URLSchemaShapeMap | null>(
   base: string,
   schema: URLSchema<S> | S,
 ) {
-  let normalizedSchema = schema instanceof URLSchema ? schema : new URLSchema(schema);
+  let normalizedSchema =
+    schema instanceof URLSchema ? schema : new URLSchema(schema);
 
   /**
    * A type-aware URL builder. Returns a URL pattern object with filled
@@ -42,23 +43,23 @@ function createRelativeURLBuilder<S extends URLSchemaShapeMap | null>(
 
     type MatchShape = S extends null
       ? {
-        params: BaselineURLComponents["params"],
-        query: BaselineURLComponents["query"],
-        hash: string;
-      }
+          params: BaselineURLComponents["params"];
+          query: BaselineURLComponents["query"];
+          hash: string;
+        }
       : {
-        params: UnpackedURLSchemaShape<NonNullable<S>[P]> extends {
-              params?: Record<string, unknown>;
-            }
-          ? UnpackedURLSchemaShape<NonNullable<S>[P]>["params"]
-          : undefined;
-        query: UnpackedURLSchemaShape<NonNullable<S>[P]> extends {
-              query?: Record<string, unknown>;
-            }
-          ? UnpackedURLSchemaShape<NonNullable<S>[P]>["query"]
-          : undefined;
-        hash: string;
-      };
+          params: UnpackedURLSchemaShape<NonNullable<S>[P]> extends {
+            params?: Record<string, unknown>;
+          }
+            ? UnpackedURLSchemaShape<NonNullable<S>[P]>["params"]
+            : undefined;
+          query: UnpackedURLSchemaShape<NonNullable<S>[P]> extends {
+            query?: Record<string, unknown>;
+          }
+            ? UnpackedURLSchemaShape<NonNullable<S>[P]>["query"]
+            : undefined;
+          hash: string;
+        };
 
     let compiledURL = build(join(base, String(pattern)), data);
     let urlSchema = (normalizedSchema.shape as S)?.[pattern] as S extends null
@@ -121,7 +122,8 @@ export function createURLBuilder<S extends URLSchemaShapeMap>(
   base?: string | URLSchema<S> | S,
   schema?: URLSchema<S> | S,
 ) {
-  if (typeof base !== "string") return createRelativeURLBuilder("", base ?? null);
+  if (typeof base !== "string")
+    return createRelativeURLBuilder("", base ?? null);
 
   return createRelativeURLBuilder(base, schema ?? null);
 }
